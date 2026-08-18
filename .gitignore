@@ -8,14 +8,18 @@ __pycache__/
 env/
 venv/
 ENV/
-build/
+# Anclados a la raíz a propósito. `lib/` sin anclar también se tragaba
+# `frontend/src/lib/` —la carpeta que shadcn/ui usa por convención—, así que esos
+# archivos nunca llegaban al repositorio y el build de Vercel fallaba con TS2307
+# aunque compilara en local.
+/build/
 develop-eggs/
 dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+/lib/
+/lib64/
 parts/
 sdist/
 var/

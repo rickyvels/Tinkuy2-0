@@ -1,14 +1,21 @@
-# Las pruebas no forman parte de la función desplegada y sus dependencias no están en
-# requirements.txt, que en Vercel es solo el conjunto de producción.
-api/tests
-api/.venv
-**/__pycache__
-docs/research/eigent-graphify
+# El proyecto de Vercel publica una sola cosa: la aplicación web de `frontend/`.
+# Todo lo que no entra en ese build se queda fuera del paquete que se sube.
 
-# Copias completas del repositorio que quedaron dentro de la raíz del servicio `backend`.
-# `backend/frontend` es idéntico a `frontend/` y `backend/backend/app` es una versión anterior
-# de `backend/app`. Nada bajo `backend/app` las importa, pero al vivir dentro del root del
-# servicio se subirían enteras y la detección de framework vería una app Vite dentro del backend.
-backend/frontend
-backend/backend
-backend/tests
+# La API se despliega aparte (ver `render.yaml`) y el frontend la alcanza por
+# `VITE_API_BASE_URL`. Subir `api/` aquí además haría que Vercel detectara
+# `api/index.py` como función Python y construyera una copia de la API antigua.
+/api
+/backend
+
+# Aplicaciones del MVP anterior (Neuroalianza v1). No forman parte de este sitio.
+/apps
+
+# Documentación y material de investigación: nada de esto entra en el bundle.
+/docs
+/render.yaml
+
+# Artefactos locales.
+**/node_modules
+**/dist
+**/__pycache__
+**/.venv
