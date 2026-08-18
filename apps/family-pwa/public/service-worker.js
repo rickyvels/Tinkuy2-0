@@ -1,24 +1,32 @@
-// v5: cambian la marca, el manifiesto y los iconos. Subir la versión descarta la caché
-// anterior en el `activate`, que si no seguiría sirviendo los recursos de Sensoria.
-const CACHE = 'sensoria-family-v5';
+// v6: la PWA deja de asumir que vive en la raíz de su origen. Subir la versión descarta la
+// caché anterior en el `activate`, que si no seguiría sirviendo rutas del despliegue viejo.
+const CACHE = 'sensoria-family-v6';
 const STATIC_PATH = /\.(?:css|js|png|svg|webp|ico|woff2?)$/i;
 
-// En el despliegue de un solo dominio la plataforma profesional comparte origen bajo /pro/.
-// Este service worker pertenece a la PWA familiar y su alcance no debe invadirla: sin esta
-// exclusión, una navegación a /pro/ sin conexión respondería con la aplicación equivocada.
+// Prefijo bajo el que está montada la PWA: `/` cuando ocupa su propio origen y `/familia/` en
+// el despliegue de un solo dominio. `registration.scope` es la única forma de saberlo desde
+// aquí: este archivo se copia tal cual desde `public/` y Vite no reescribe su contenido.
+const ROOT = new URL(self.registration.scope).pathname;
+
+// Este service worker pertenece a la PWA familiar y su alcance no debe invadir lo que comparte
+// origen con ella: sin estas exclusiones, una navegación a /pro/ o a la portada sin conexión
+// respondería con la aplicación equivocada.
 function isOwnedByFamilyApp(url) {
   return url.origin === self.location.origin
+    && url.pathname.startsWith(ROOT)
+    // Cuando ROOT es `/` el prefijo no distingue nada, así que la API y la plataforma
+    // profesional siguen necesitando una exclusión explícita.
     && !url.pathname.startsWith('/api/')
     && !url.pathname.startsWith('/pro/');
 }
 
 function isStaticAsset(url) {
   return isOwnedByFamilyApp(url)
-    && (STATIC_PATH.test(url.pathname) || url.pathname === '/manifest.webmanifest');
+    && (STATIC_PATH.test(url.pathname) || url.pathname === `${ROOT}manifest.webmanifest`);
 }
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.add('/')));
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.add(ROOT)));
   self.skipWaiting();
 });
 
@@ -46,7 +54,7 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(event.request)
         .then((response) => response)
-        .catch(() => caches.match('/')),
+        .catch(() => caches.match(ROOT)),
     );
     return;
   }

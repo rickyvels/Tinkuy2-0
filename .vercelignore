@@ -1,14 +1,12 @@
-# El proyecto de Vercel publica una sola cosa: la aplicación web de `frontend/`.
+# El proyecto de Vercel publica las tres SPA que ensambla `scripts/build-web.mjs`:
+# la portada (`frontend/`), la PWA familiar y la plataforma profesional (`apps/`).
 # Todo lo que no entra en ese build se queda fuera del paquete que se sube.
 
-# La API se despliega aparte (ver `render.yaml`) y el frontend la alcanza por
-# `VITE_API_BASE_URL`. Subir `api/` aquí además haría que Vercel detectara
+# La API se despliega aparte (ver `render.yaml`) y las aplicaciones la alcanzan por
+# rutas relativas `/api/v1`. Subir `api/` aquí además haría que Vercel detectara
 # `api/index.py` como función Python y construyera una copia de la API antigua.
 /api
 /backend
-
-# Aplicaciones del MVP anterior (Neuroalianza v1). No forman parte de este sitio.
-/apps
 
 # Documentación y material de investigación: nada de esto entra en el bundle.
 /docs

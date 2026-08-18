@@ -48,6 +48,8 @@ coverage.xml
 node_modules/
 dist/
 dist-ssr/
+# Caché incremental de `tsc -b`. La regenera cada build y versionarla solo produce ruido.
+*.tsbuildinfo
 *.local
 .npm
 .eslintcache

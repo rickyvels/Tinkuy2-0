@@ -1,10 +1,14 @@
 #!/usr/bin/env node
-// Compila las dos SPA en un único directorio estático: la PWA familiar en la raíz y la
-// plataforma profesional en /pro/.
+// Compila las tres SPA en un único directorio estático: la portada en la raíz, la PWA familiar
+// en /familia/ y la plataforma profesional en /pro/.
 //
-// Un solo origen es lo que permite que ambas llamen a `/api/v1` sin conocer la URL del backend.
-// Eso elimina el CORS y, sobre todo, el error de que `VITE_API_URL` se congela en el bundle
-// durante el build: una URL relativa no puede quedar apuntando al sitio equivocado.
+// La portada es la puerta de entrada: su botón «Abrir Aplicación» lleva a la PWA familiar y el
+// de «Personal Médico» a la plataforma. Al compartir origen, esos enlaces son rutas relativas y
+// no hay ninguna URL que mantener sincronizada entre despliegues.
+//
+// Un solo origen es además lo que permite que todas llamen a `/api/v1` sin conocer la URL del
+// backend. Eso elimina el CORS y, sobre todo, el error de que la URL de la API se congela en el
+// bundle durante el build: una URL relativa no puede quedar apuntando al sitio equivocado.
 import { execFileSync } from 'node:child_process';
 import { cpSync, mkdirSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -14,9 +18,13 @@ const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const dist = join(root, 'dist');
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
+// El orden importa: la portada escribe en la raíz de `dist`, así que va primero y las otras
+// dos caen después en sus subcarpetas.
 const apps = [
-  { prefix: 'apps/family-pwa', target: dist, base: '/' },
-  { prefix: 'apps/platform', target: join(dist, 'pro'), base: '/pro/' },
+  // `frontend` lee la API con VITE_API_BASE_URL, que vacía significa «mismo origen».
+  { prefix: 'frontend', target: dist, base: '/', env: {} },
+  { prefix: 'apps/family-pwa', target: join(dist, 'familia'), base: '/familia/', env: { VITE_API_URL: '/api/v1' } },
+  { prefix: 'apps/platform', target: join(dist, 'pro'), base: '/pro/', env: { VITE_API_URL: '/api/v1' } },
 ];
 
 function run(args, env) {
@@ -52,10 +60,8 @@ for (const app of apps) {
   // Lo que va tras `--` se añade al final del script, es decir a `vite build`. Pasar el prefijo
   // por la bandera nativa evita leer `process.env` dentro de vite.config.ts, que obligaría a
   // instalar @types/node solo para type-chequear ese archivo.
-  run(['--prefix', app.prefix, 'run', 'build', '--', `--base=${app.base}`], {
-    VITE_API_URL: '/api/v1',
-  });
+  run(['--prefix', app.prefix, 'run', 'build', '--', `--base=${app.base}`], app.env);
   cpSync(join(root, app.prefix, 'dist'), app.target, { recursive: true });
 }
 
-console.log(`[build-web] Listo. PWA familiar en /, plataforma en /pro/.`);
+console.log(`[build-web] Listo. Portada en /, PWA familiar en /familia/, plataforma en /pro/.`);

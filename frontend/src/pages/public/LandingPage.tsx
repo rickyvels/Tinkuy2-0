@@ -12,7 +12,7 @@ import {
   Stethoscope,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { familyPwaLinkProps } from "@/lib/familyPwa"
+import { familyPwaLinkProps, platformLinkProps } from "@/lib/apps"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { BRAND_NAME_PARTS } from "@/config/brand"
@@ -39,14 +39,9 @@ export function LandingPage() {
           </Link>
 
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            {/* Portal del personal médico y administrativo. Vive fuera de esta aplicación, así
-                que sale en una pestaña nueva y no pasa por el enrutador. */}
-            <a
-              href="https://github.com/miguel-isidro05/neuroalianza-ruta-viva-mvp"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Personal médico y administrativo (se abre en una pestaña nueva)"
-            >
+            {/* Portal del personal médico y administrativo: la plataforma profesional
+                (`apps/platform`). Es otra aplicación, así que no pasa por el enrutador. */}
+            <a {...platformLinkProps} aria-label="Personal médico y administrativo">
               <Button
                 variant="ghost"
                 size="sm"
@@ -67,7 +62,9 @@ export function LandingPage() {
                 <span>Demo Pitch</span>
               </Button>
             </Link>
-            <Link to="/app">
+            {/* La aplicación que abre la portada es la PWA familiar, no el árbol `/app` de
+                esta misma SPA: aquella es la que usan las familias. */}
+            <a {...familyPwaLinkProps}>
               {/* Debajo de 360px el rótulo completo no cabe junto a la marca, así
                   que se acorta en vez de desbordar la página. */}
               <Button className="gap-2 font-semibold shadow-md shadow-primary/25 min-h-10 px-4 sm:px-5">
@@ -75,7 +72,7 @@ export function LandingPage() {
                 <span className="xs:hidden">Abrir</span>
                 <ArrowRight className="w-4 h-4 shrink-0" />
               </Button>
-            </Link>
+            </a>
           </div>
         </div>
       </header>

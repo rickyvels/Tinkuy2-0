@@ -1,11 +1,12 @@
 // Dirección del sitio de Tinkuy (la aplicación `frontend`), donde viven la portada del reto,
 // el panel de demostración y los accesos de personal de salud y especialistas.
 //
-// La PWA se despliega en su propio origen, así que el enlace de vuelta necesita una URL
-// absoluta. En producción se fija con `VITE_SITE_URL`; en desarrollo cae al puerto de
-// `npm run dev` dentro de `frontend`, que es el reverso del enlace que la portada usa para
-// abrir esta PWA.
+// En el despliegue de un solo dominio la portada es la raíz del mismo origen, así que una
+// ruta relativa basta y no hay ninguna URL que mantener sincronizada. `VITE_SITE_URL` sigue
+// disponible para el caso en que la PWA se despliegue en un origen aparte, y en desarrollo
+// se cae al puerto de `npm run dev` dentro de `frontend`.
 
 const DEV_FALLBACK = 'http://localhost:5173';
 
-export const siteUrl: string = import.meta.env.VITE_SITE_URL || DEV_FALLBACK;
+export const siteUrl: string =
+  import.meta.env.VITE_SITE_URL || (import.meta.env.DEV ? DEV_FALLBACK : '/');
