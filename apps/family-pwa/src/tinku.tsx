@@ -4,6 +4,8 @@
 // es un render con transparencia y el vector no lo reproduce. Vive en `public/`, así que el
 // service worker lo precachea y sigue apareciendo sin conexión.
 
+import { asset } from './site';
+
 type MarkProps = { className?: string };
 
 /** Proporción del render original (337 × 589). `size` fija el alto y el ancho lo sigue. */
@@ -34,7 +36,7 @@ export function Tinku({ size = 320, message, animation = 'idle', shadow = true, 
         </div>
       )}
       <div className="tinku-stage">
-        <img src="/tinku.png" alt="Tinku, la mascota de Tinkuy" width={width} height={size} draggable={false} />
+        <img src={asset('tinku.png')} alt="Tinku, la mascota de Tinkuy" width={width} height={size} draggable={false} />
         {shadow && <span className="tinku-shadow" style={{ width: Math.round(size * 0.3125) }} />}
       </div>
     </div>
@@ -98,6 +100,42 @@ export function TinkuyEmblem({ className }: MarkProps) {
 
       {/* El punto de contacto: el brazo de la madre sosteniendo a la criatura. */}
       <path d="M96 140c10-9 23-12 35-9" stroke="#8ea8ef" strokeWidth="7" strokeLinecap="round" fill="none" opacity=".75" />
+    </svg>
+  );
+}
+
+/**
+ * Marca de Tinkuy: la madre y el niño dentro del listón del encuentro.
+ *
+ * Va escrita a mano en vez de cargarse como archivo porque es lo único de la interfaz que no
+ * puede fallar: preside el botón de vuelta al sitio y aparece antes que cualquier recurso de
+ * `public/`. Es el mismo dibujo que `frontend/src/assets/tinkuy-mark.svg`; si se retoca uno,
+ * hay que retocar el otro.
+ */
+export function TinkuyMark({ className }: MarkProps) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="tkm-madre" x1="16" y1="9" x2="34" y2="42" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#2f6fa8" />
+          <stop offset="1" stopColor="#1a3d68" />
+        </linearGradient>
+        <linearGradient id="tkm-nino" x1="35" y1="21" x2="48" y2="40" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#5f9acb" />
+          <stop offset="1" stopColor="#2f6fa8" />
+        </linearGradient>
+        <linearGradient id="tkm-liston" x1="10" y1="46" x2="54" y2="22" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#6ba3d0" />
+          <stop offset=".5" stopColor="#37729f" />
+          <stop offset="1" stopColor="#22527f" />
+        </linearGradient>
+      </defs>
+      <path d="M12.97 39.87A21 21 0 0 0 51.73 23.82" fill="none" stroke="url(#tkm-liston)" strokeWidth="6.5" strokeLinecap="round" />
+      <circle cx="24" cy="17" r="7.5" fill="url(#tkm-madre)" />
+      <path d="M22.6 25.4C20.2 32 23.6 39.8 31.6 41.4" fill="none" stroke="url(#tkm-madre)" strokeWidth="7" strokeLinecap="round" />
+      <circle cx="40" cy="26" r="5.5" fill="url(#tkm-nino)" />
+      <path d="M44 30.2C46.1 33.6 45.6 37.6 42.6 39.6" fill="none" stroke="url(#tkm-nino)" strokeWidth="5" strokeLinecap="round" />
+      <path d="M12.55 38h2.5v2.25h2.25v2.5h-2.25v2.25h-2.5v-2.25h-2.25v-2.5h2.25z" fill="#e6c56f" />
     </svg>
   );
 }

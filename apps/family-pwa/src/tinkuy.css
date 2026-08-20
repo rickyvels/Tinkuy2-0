@@ -117,6 +117,19 @@
      área segura real. */
   padding: max(20px, calc(env(safe-area-inset-top) + 14px)) 20px 0;
 }
+/* La marca es un botón: se pinta como píldora igual que la moneda y el selector de idioma,
+   para que se lea como algo que se toca y no como el título de la pantalla. */
+.tk-brand-home {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 10px 5px 5px; border-radius: 999px;
+  border: 1px solid #e7e0d2; background: #fff;
+  color: var(--tk-brand-ink); text-decoration: none;
+  transition: transform 140ms cubic-bezier(.23,1,.32,1);
+}
+.tk-brand-home:active { transform: scale(.96); }
+.tk-brand-mark { display: block; width: 27px; height: 27px; flex: none; }
+/* La flecha solo insinúa la salida; el destino lo dice el `aria-label` del enlace. */
+.tk-brand-home > svg:last-child { width: 13px; height: 13px; flex: none; opacity: .45; }
 .tk-brand-name { color: var(--tk-brand-ink); font-size: 19px; font-weight: 700; letter-spacing: -.2px; }
 .tk-hero-bar > .tk-spacer { flex: 1; }
 

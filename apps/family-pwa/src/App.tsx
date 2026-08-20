@@ -8,8 +8,8 @@ import {
 import { motion, useReducedMotion } from 'motion/react';
 import { useLanguage, type Lang, type StringKey } from './i18n';
 import { familyApi, type BarrierReportPayload, type BarrierType, type CareStage, type CurrentCase, type FamilyAssistantReply, type FamilyData, type FamilyNote, type FamilyNotePayload, type FamilyNoteSummary, type NoteProgress, type NoteSetting, type Session } from './api';
-import { Tinku, TinkuyEmblem } from './tinku';
-import { siteUrl } from './site';
+import { Tinku, TinkuyEmblem, TinkuyMark } from './tinku';
+import { asset, siteUrl } from './site';
 import { DevelopmentGame } from './game';
 
 const DEMO_CREDENTIALS = import.meta.env.DEV || import.meta.env.VITE_DEMO_CREDENTIALS === 'true';
@@ -188,7 +188,14 @@ function TinkuyHero({ family, coins, lang, onLang, t, onGo }: {
     {/* El héroe ya no lleva degradado ni capas de contraste: el fondo es el crema del propio
         logotipo y el texto va en el azul de la marca, así que no hace falta velar nada. */}
     <div className="tk-hero-bar">
-      <span className="tk-brand-name">Tinkuy</span>
+      {/* La marca hace de botón de vuelta: es el único camino de regreso al sitio desde el
+          inicio, y en la esquina izquierda es donde se busca. Sale del enrutador interno
+          porque el sitio es otra aplicación. */}
+      <a className="tk-brand-home" href={siteUrl} aria-label="Volver al sitio de Tinkuy">
+        <TinkuyMark className="tk-brand-mark" />
+        <span className="tk-brand-name">Tinkuy</span>
+        <CaretRight weight="bold" />
+      </a>
       <span className="tk-spacer" />
       <span className="tk-coin-pill"><span className="tk-coin" />{coins.toLocaleString('es-PE')}</span>
       <button className="tk-icon-btn" onClick={() => onLang(lang === 'es' ? 'qu' : 'es')} aria-label={`${t('languageLabel')}: ${lang === 'es' ? 'Runasimi' : 'Español'}`}>
@@ -221,7 +228,7 @@ function TinkuyHero({ family, coins, lang, onLang, t, onGo }: {
 function TinkuyLogo() {
   const [missing, setMissing] = useState(false);
   if (missing) return <TinkuyEmblem className="tk-hero-emblem" />;
-  return <img className="tk-hero-logo" src="/tinkuy-logo.png" alt="Tinkuy · Crecer juntos, detectar a tiempo" onError={() => setMissing(true)} />;
+  return <img className="tk-hero-logo" src={asset('tinkuy-logo.png')} alt="Tinkuy · Crecer juntos, detectar a tiempo" onError={() => setMissing(true)} />;
 }
 
 function SubBar({ title, coins, onBack }: { title: string; coins: number; onBack: () => void }) {
