@@ -550,6 +550,10 @@
 .tinkuy-login { background: linear-gradient(180deg, #6b5b8e 0%, #8a6a8f 38%, #b8757a 62%, #3d3355 100%); }
 .tinkuy-login::after { display: none; }
 .tinkuy-login > section { border-radius: 26px; background: rgba(255,255,255,.96); box-shadow: 0 24px 70px rgba(24,17,38,.28); }
+/* El emblema abre la fila de la marca. `.family-login-brand` ya es un flex en hilera, así que
+   basta con fijarle el tamaño: la regla genérica de esa fila dimensiona los svg por
+   `font-size`, y un logotipo no puede depender de eso. */
+.tinkuy-login .tk-login-mark { width: 34px; height: 34px; flex: none; }
 .tinkuy-login .family-login-brand strong { font-size: 21px; font-weight: 700; letter-spacing: -.4px; color: var(--tk-ink); }
 .tinkuy-login h1 { font-weight: 700; letter-spacing: -.038em; }
 .tinkuy-login form > button {

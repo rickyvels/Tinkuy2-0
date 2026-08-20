@@ -522,10 +522,10 @@ function FamilyLogin({ onSession }: { onSession: (session: Session) => void }) {
   // prueba se muestran bajo el botón.
   const [mode, setMode] = useState<'login' | 'register'>('login'); const [dni, setDni] = useState(''); const [password, setPassword] = useState(''); const [registration, setRegistration] = useState({ dni: '', password: '', password_confirm: '', companion_name: '', patient_name: '', relationship: '', phone: '', district: '', consent_confirmed: false }); const [error, setError] = useState(''); const [loading, setLoading] = useState(false);
   const onlyDigits = (value: string) => value.replace(/\D/g, '').slice(0, 16); const updateRegistration = (field: keyof typeof registration, value: string | boolean) => setRegistration((current) => ({ ...current, [field]: value }));
-  const submitLogin = async (event: React.FormEvent) => { event.preventDefault(); setLoading(true); setError(''); try { const nextSession = await familyApi.login(dni, password); if (nextSession.user.role !== 'family') throw new Error('Este acceso es para el acompañante familiar.'); onSession(nextSession); } catch (reason) { setError(reason instanceof Error ? reason.message : 'No pudimos verificar tus datos.'); } finally { setLoading(false); } };
+  const submitLogin = async (event: React.FormEvent) => { event.preventDefault(); setLoading(true); setError(''); try { const nextSession = await familyApi.login(dni, password); if (nextSession.user.role !== 'family') throw new Error(t('errorRole')); onSession(nextSession); } catch (reason) { setError(reason instanceof Error ? reason.message : t('errorLogin')); } finally { setLoading(false); } };
   const submitRegistration = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (registration.password !== registration.password_confirm) { setError('Las dos contraseñas no coinciden.'); return; }
+    if (registration.password !== registration.password_confirm) { setError(t('errorPasswordMismatch')); return; }
     setLoading(true); setError('');
     try {
       // El registro devuelve una sesión, así que la familia entra directamente en vez de
@@ -537,64 +537,67 @@ function FamilyLogin({ onSession }: { onSession: (session: Session) => void }) {
         district: registration.district, consent_confirmed: true,
       });
       onSession(session);
-    } catch (reason) { setError(reason instanceof Error ? reason.message : 'No pudimos crear tu acceso.'); }
+    } catch (reason) { setError(reason instanceof Error ? reason.message : t('errorRegister')); }
     finally { setLoading(false); }
   };
   return <main className="family-login tinkuy-login tinkuy-app">
     <section>
       <div className="family-login-brand">
-        <strong>Tinkuy<small className="tk-login-tagline">Crecer juntos, detectar a tiempo</small></strong>
+        {/* El mismo emblema que preside el inicio: quien abre la aplicación por primera vez
+            ve la marca aquí, no solo su nombre escrito. */}
+        <TinkuyMark className="tk-login-mark" />
+        <strong>Tinkuy<small className="tk-login-tagline">{t('loginTagline')}</small></strong>
         <LanguageToggle lang={lang} onChange={setLang} label={t('languageLabel')} />
       </div>
 
-      <p>{mode === 'login' ? t('loginAccess') : 'CREAR MI ACCESO'}</p>
-      <h1>{mode === 'login' ? t('loginTitle') : 'Empecemos con tus datos.'}</h1>
-      <span>{mode === 'login' ? t('loginSubtitle') : 'Son cuatro datos tuyos y dos del niño o niña. Eliges una contraseña y entras de inmediato; el equipo verifica después.'}</span>
+      <p>{mode === 'login' ? t('loginAccess') : t('registerKicker')}</p>
+      <h1>{mode === 'login' ? t('loginTitle') : t('registerTitle')}</h1>
+      <span>{mode === 'login' ? t('loginSubtitle') : t('registerSubtitle')}</span>
 
-      <div className="access-tabs" role="tablist" aria-label="Acceso familiar">
+      <div className="access-tabs" role="tablist" aria-label={t('accessTablist')}>
         <button type="button" role="tab" aria-selected={mode === 'login'} onClick={() => { setMode('login'); setError(''); }}>{t('tabLogin')}</button>
         <button type="button" role="tab" aria-selected={mode === 'register'} onClick={() => { setMode('register'); setError(''); }}>{t('tabRegister')}</button>
       </div>
 
       {mode === 'login' ? <form onSubmit={submitLogin}>
-        <label>DNI<input inputMode="numeric" maxLength={16} autoComplete="username" value={dni} onChange={(event) => setDni(onlyDigits(event.target.value))} /></label>
+        <label>{t('dni')}<input inputMode="numeric" maxLength={16} autoComplete="username" value={dni} onChange={(event) => setDni(onlyDigits(event.target.value))} /></label>
         <label>{t('password')}<input type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} /></label>
         {error && <div className="family-error" role="alert">{error}</div>}
         <button disabled={loading}><Key weight="fill" />{loading ? t('checking') : t('enterRoute')}</button>
-        {DEMO_CREDENTIALS && <p className="tk-demo-hint">Demostración con datos sintéticos. Entra con el DNI <b>12345678</b> y la contraseña <b>familia123</b>.</p>}
+        {DEMO_CREDENTIALS && <p className="tk-demo-hint">{t('demoHintLead')} <b>12345678</b> {t('demoHintJoin')} <b>familia123</b>.</p>}
         {/* Quien llega aquí por la dirección de la PWA no tiene forma de alcanzar la portada
             del proyecto, que vive en otro origen. Este es el reverso del enlace que la
             portada usa para abrir la aplicación. */}
-        <a className="tk-site-link" href={siteUrl}><CaretLeft weight="bold" /> Conocer el proyecto Tinkuy</a>
+        <a className="tk-site-link" href={siteUrl}><CaretLeft weight="bold" /> {t('knowProject')}</a>
       </form> : <form onSubmit={submitRegistration} className="registration-form">
         {/* Antes eran nueve campos seguidos en una sola columna. Agrupados en tres bloques,
             quien registra sabe cuánto le falta y de quién está hablando en cada momento. */}
         <fieldset>
-          <legend>Sobre ti</legend>
-          <label>Tu nombre completo<input required autoComplete="name" value={registration.companion_name} onChange={(event) => updateRegistration('companion_name', event.target.value)} /></label>
-          <label>DNI<input required inputMode="numeric" maxLength={16} autoComplete="username" value={registration.dni} onChange={(event) => updateRegistration('dni', onlyDigits(event.target.value))} /><small>Solo números. Será tu usuario para entrar.</small></label>
-          <label>Teléfono de contacto<input required inputMode="tel" autoComplete="tel" value={registration.phone} onChange={(event) => updateRegistration('phone', event.target.value)} /></label>
-          <label>Distrito<input required value={registration.district} onChange={(event) => updateRegistration('district', event.target.value)} /></label>
+          <legend>{t('legendAboutYou')}</legend>
+          <label>{t('fieldFullName')}<input required autoComplete="name" value={registration.companion_name} onChange={(event) => updateRegistration('companion_name', event.target.value)} /></label>
+          <label>{t('dni')}<input required inputMode="numeric" maxLength={16} autoComplete="username" value={registration.dni} onChange={(event) => updateRegistration('dni', onlyDigits(event.target.value))} /><small>{t('hintDni')}</small></label>
+          <label>{t('fieldPhone')}<input required inputMode="tel" autoComplete="tel" value={registration.phone} onChange={(event) => updateRegistration('phone', event.target.value)} /></label>
+          <label>{t('fieldDistrict')}<input required value={registration.district} onChange={(event) => updateRegistration('district', event.target.value)} /></label>
         </fieldset>
 
         <fieldset>
-          <legend>Sobre el niño o la niña</legend>
-          <label>Su nombre<input required value={registration.patient_name} onChange={(event) => updateRegistration('patient_name', event.target.value)} /></label>
-          <label>Tu vínculo con él o ella<input required placeholder="Madre, padre, tutor/a…" value={registration.relationship} onChange={(event) => updateRegistration('relationship', event.target.value)} /></label>
+          <legend>{t('legendAboutChild')}</legend>
+          <label>{t('fieldChildName')}<input required value={registration.patient_name} onChange={(event) => updateRegistration('patient_name', event.target.value)} /></label>
+          <label>{t('fieldRelationship')}<input required placeholder={t('placeholderRelationship')} value={registration.relationship} onChange={(event) => updateRegistration('relationship', event.target.value)} /></label>
         </fieldset>
 
         <fieldset>
-          <legend>Tu contraseña</legend>
-          <label>Crea tu contraseña<input required type="password" minLength={8} autoComplete="new-password" value={registration.password} onChange={(event) => updateRegistration('password', event.target.value)} /><small>Mínimo 8 caracteres.</small></label>
-          <label>Repítela<input required type="password" minLength={8} autoComplete="new-password" value={registration.password_confirm} onChange={(event) => updateRegistration('password_confirm', event.target.value)} /></label>
+          <legend>{t('legendPassword')}</legend>
+          <label>{t('fieldNewPassword')}<input required type="password" minLength={8} autoComplete="new-password" value={registration.password} onChange={(event) => updateRegistration('password', event.target.value)} /><small>{t('hintMinChars')}</small></label>
+          <label>{t('fieldRepeatPassword')}<input required type="password" minLength={8} autoComplete="new-password" value={registration.password_confirm} onChange={(event) => updateRegistration('password_confirm', event.target.value)} /></label>
         </fieldset>
 
         <label className="consent-check">
           <input required type="checkbox" checked={registration.consent_confirmed} onChange={(event) => updateRegistration('consent_confirmed', event.target.checked)} />
-          <span>Confirmo que estos datos se usarán para revisar mi solicitud y coordinar una ruta.</span>
+          <span>{t('consentText')}</span>
         </label>
         {error && <div className="family-error" role="alert">{error}</div>}
-        <button disabled={loading}><ShieldCheck weight="fill" />{loading ? 'Creando tu acceso…' : 'Crear mi acceso y entrar'}</button>
+        <button disabled={loading}><ShieldCheck weight="fill" />{loading ? t('creatingAccess') : t('createAccess')}</button>
       </form>}
     </section>
   </main>;
