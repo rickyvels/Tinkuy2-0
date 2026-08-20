@@ -1,5 +1,5 @@
-# El proyecto de Vercel publica una sola cosa: la aplicación web de `frontend/`.
-# Todo lo que no entra en ese build se queda fuera del paquete que se sube.
+# El proyecto de Vercel publica el sitio de `frontend/` en la raíz y la PWA familiar de
+# `apps/family-pwa` en /pwa/. Todo lo que no entra en ese build se queda fuera del paquete.
 
 # La API se despliega aparte (ver `render.yaml`) y el frontend la alcanza por
 # `VITE_API_BASE_URL`. Subir `api/` aquí además haría que Vercel detectara
@@ -7,8 +7,9 @@
 /api
 /backend
 
-# Aplicaciones del MVP anterior (Neuroalianza v1). No forman parte de este sitio.
-/apps
+# `apps/family-pwa` sí entra: es la PWA que el sitio publica en /pwa/ (ver
+# `scripts/build-site.mjs`). La plataforma del MVP anterior no forma parte de este sitio.
+/apps/platform
 
 # Documentación y material de investigación: nada de esto entra en el bundle.
 /docs

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img">
+  <title>Tinkuy</title>
+  <defs>
+    <linearGradient id="tk-madre" x1="16" y1="9" x2="34" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2f6fa8" />
+      <stop offset="1" stop-color="#1a3d68" />
+    </linearGradient>
+    <linearGradient id="tk-nino" x1="35" y1="21" x2="48" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5f9acb" />
+      <stop offset="1" stop-color="#2f6fa8" />
+    </linearGradient>
+    <linearGradient id="tk-liston" x1="10" y1="46" x2="54" y2="22" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6ba3d0" />
+      <stop offset=".5" stop-color="#37729f" />
+      <stop offset="1" stop-color="#22527f" />
+    </linearGradient>
+  </defs>
+
+  <!-- El listón del encuentro: abraza a los dos por debajo y se abre arriba. -->
+  <path d="M12.97 39.87A21 21 0 0 0 51.73 23.82"
+        fill="none" stroke="url(#tk-liston)" stroke-width="6.5" stroke-linecap="round" />
+
+  <!-- Madre. -->
+  <circle cx="24" cy="17" r="7.5" fill="url(#tk-madre)" />
+  <path d="M22.6 25.4C20.2 32 23.6 39.8 31.6 41.4"
+        fill="none" stroke="url(#tk-madre)" stroke-width="7" stroke-linecap="round" />
+
+  <!-- Niño, recogido en el hueco del abrazo. -->
+  <circle cx="40" cy="26" r="5.5" fill="url(#tk-nino)" />
+  <path d="M44 30.2C46.1 33.6 45.6 37.6 42.6 39.6"
+        fill="none" stroke="url(#tk-nino)" stroke-width="5" stroke-linecap="round" />
+
+  <!-- Cruz de salud, sobre el listón: dorado contra azul para que aguante en pequeño. -->
+  <path d="M12.55 38h2.5v2.25h2.25v2.5h-2.25v2.25h-2.5v-2.25h-2.25v-2.5h2.25z" fill="#e6c56f" />
+</svg>

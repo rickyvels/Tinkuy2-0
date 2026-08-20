@@ -1,22 +1,25 @@
 import type { AnchorHTMLAttributes } from "react"
 
 /**
- * Enlace al portal familiar.
+ * Enlace a la PWA familiar (`apps/family-pwa`).
  *
- * La PWA familiar es una aplicación aparte, con su propio origen, así que el
+ * Es otra aplicación —otro bundle, con su propio service worker—, así que el
  * enlace sale del enrutador: es un `<a>`, no un `<Link>`.
  *
- * `VITE_FAMILY_PWA_URL` es la URL de ese despliegue. Cuando no está definida
- * —el caso por defecto, y el único posible mientras la PWA no esté publicada—
- * el enlace lleva al acceso familiar de esta misma aplicación en lugar de
- * quedarse muerto.
+ * El despliegue publica las dos bajo el mismo dominio: este sitio en la raíz y
+ * la PWA en `/pwa/` (ver `scripts/build-site.mjs`). Compartir origen es lo que
+ * permite que la ruta relativa de abajo funcione sin conocer el dominio, y que
+ * la PWA llame a `/api/v1` sin CORS.
+ *
+ * `VITE_FAMILY_PWA_URL` sigue existiendo para el caso en que la PWA se aloje
+ * aparte; cuando está definida, gana y el enlace abre en pestaña nueva.
  */
 
-/** Acceso familiar dentro de esta aplicación. Ver `AppRoutes`. */
-const IN_APP_FAMILY_ACCESS = "/acceso"
+/** Ruta de la PWA familiar dentro de este mismo despliegue. */
+const SAME_ORIGIN_FAMILY_PWA = "/pwa/"
 
 const configuredUrl = (import.meta.env.VITE_FAMILY_PWA_URL as string | undefined)?.trim()
 
 export const familyPwaLinkProps: AnchorHTMLAttributes<HTMLAnchorElement> = configuredUrl
   ? { href: configuredUrl, target: "_blank", rel: "noopener noreferrer" }
-  : { href: IN_APP_FAMILY_ACCESS }
+  : { href: SAME_ORIGIN_FAMILY_PWA }

@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "frontend",
-      "runtimeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+      "runtimeExecutable": "C:/Program Files/nodejs/node.exe",
       "runtimeArgs": [
         "frontend/node_modules/vite/bin/vite.js",
         "frontend",
@@ -15,7 +15,7 @@
     },
     {
       "name": "family-pwa",
-      "runtimeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+      "runtimeExecutable": "C:/Program Files/nodejs/node.exe",
       "runtimeArgs": [
         "apps/family-pwa/node_modules/vite/bin/vite.js",
         "apps/family-pwa",
@@ -26,6 +26,19 @@
         "--strictPort"
       ],
       "port": 5174
+    },
+    {
+      "name": "site-preview",
+      "runtimeExecutable": "C:/Program Files/nodejs/node.exe",
+      "runtimeArgs": [
+        "frontend/node_modules/vite/bin/vite.js",
+        "preview",
+        "frontend",
+        "--port",
+        "4173",
+        "--strictPort"
+      ],
+      "port": 4173
     }
   ]
 }

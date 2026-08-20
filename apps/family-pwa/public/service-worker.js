@@ -1,24 +1,30 @@
-// v5: cambian la marca, el manifiesto y los iconos. Subir la versión descarta la caché
-// anterior en el `activate`, que si no seguiría sirviendo los recursos de Sensoria.
-const CACHE = 'sensoria-family-v5';
+// v6: el archivo deja de dar por hecho que la PWA vive en la raíz del dominio. Subir la
+// versión descarta la caché anterior en el `activate`, que si no seguiría sirviendo rutas
+// absolutas que ya no existen.
+const CACHE = 'sensoria-family-v6';
 const STATIC_PATH = /\.(?:css|js|png|svg|webp|ico|woff2?)$/i;
 
-// En el despliegue de un solo dominio la plataforma profesional comparte origen bajo /pro/.
-// Este service worker pertenece a la PWA familiar y su alcance no debe invadirla: sin esta
-// exclusión, una navegación a /pro/ sin conexión respondería con la aplicación equivocada.
+// Raíz pública de la PWA, deducida de dónde está este mismo archivo: «/» cuando se sirve
+// sola y «/pwa/» cuando comparte dominio con el sitio de Tinkuy. Siempre acaba en «/».
+const BASE = new URL('./', self.location).pathname;
+
+// El alcance no debe invadir lo que hay fuera de la PWA: la API, el sitio en la raíz, o la
+// plataforma profesional bajo /pro/ en el despliegue de un solo dominio. Sin esta exclusión,
+// una navegación ahí sin conexión respondería con la aplicación equivocada.
 function isOwnedByFamilyApp(url) {
   return url.origin === self.location.origin
-    && !url.pathname.startsWith('/api/')
-    && !url.pathname.startsWith('/pro/');
+    && url.pathname.startsWith(BASE)
+    && !url.pathname.startsWith(`${BASE}api/`)
+    && !url.pathname.startsWith(`${BASE}pro/`);
 }
 
 function isStaticAsset(url) {
   return isOwnedByFamilyApp(url)
-    && (STATIC_PATH.test(url.pathname) || url.pathname === '/manifest.webmanifest');
+    && (STATIC_PATH.test(url.pathname) || url.pathname === `${BASE}manifest.webmanifest`);
 }
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.add('/')));
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.add(BASE)));
   self.skipWaiting();
 });
 
@@ -46,7 +52,7 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(event.request)
         .then((response) => response)
-        .catch(() => caches.match('/')),
+        .catch(() => caches.match(BASE)),
     );
     return;
   }

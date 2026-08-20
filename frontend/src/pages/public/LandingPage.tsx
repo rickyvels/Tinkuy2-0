@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom"
 import {
-  Activity,
   ArrowRight,
   Baby,
   Brain,
@@ -15,7 +14,7 @@ import { Button } from "@/components/ui/button"
 import { familyPwaLinkProps } from "@/lib/familyPwa"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { BRAND_NAME_PARTS } from "@/config/brand"
+import { BRAND_NAME_PARTS, LOGO_SRC } from "@/config/brand"
 
 export function LandingPage() {
   return (
@@ -24,9 +23,10 @@ export function LandingPage() {
       <header className="sticky top-0 z-50 w-full border-b border-border/80 bg-background/85 backdrop-blur-md">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
           <Link to="/" className="flex items-center gap-2 sm:gap-3 group min-w-0">
-            <div className="w-10 h-10 shrink-0 rounded-2xl bg-gradient-to-tr from-primary to-primary/80 flex items-center justify-center text-primary-foreground shadow-md shadow-primary/20 group-hover:scale-105 transition-transform">
-              <Activity className="w-5 h-5" />
-            </div>
+            {/* El logotipo manda: la teja solo le da forma y un poco de aire. */}
+            <span className="w-10 h-10 shrink-0 rounded-2xl bg-primary/10 ring-1 ring-inset ring-primary/15 flex items-center justify-center overflow-hidden shadow-sm shadow-primary/10 group-hover:scale-105 transition-transform">
+              <img src={LOGO_SRC ?? ""} alt="" className="w-7 h-7 object-contain" />
+            </span>
             <div className="min-w-0">
               <span className="text-lg sm:text-xl font-bold font-heading t-tight text-foreground">
                 {BRAND_NAME_PARTS.lead}
@@ -67,7 +67,8 @@ export function LandingPage() {
                 <span>Demo Pitch</span>
               </Button>
             </Link>
-            <Link to="/app">
+            {/* Sale del router: abre la PWA familiar, que es otra aplicación. */}
+            <a {...familyPwaLinkProps}>
               {/* Debajo de 360px el rótulo completo no cabe junto a la marca, así
                   que se acorta en vez de desbordar la página. */}
               <Button className="gap-2 font-semibold shadow-md shadow-primary/25 min-h-10 px-4 sm:px-5">
@@ -75,7 +76,7 @@ export function LandingPage() {
                 <span className="xs:hidden">Abrir</span>
                 <ArrowRight className="w-4 h-4 shrink-0" />
               </Button>
-            </Link>
+            </a>
           </div>
         </div>
       </header>

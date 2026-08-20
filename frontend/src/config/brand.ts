@@ -9,6 +9,8 @@
  * navegadores que estén probando la demo.
  */
 
+import logoUrl from "@/assets/tinkuy-mark.svg"
+
 export const BRAND_NAME = "Tinkuy"
 
 /** Se resalta en la segunda mitad del nombre, como hacía la marca anterior. */
@@ -17,8 +19,8 @@ export const BRAND_NAME_PARTS = { lead: "Tin", accent: "kuy" } as const
 export const BRAND_TAGLINE = "Neurodesarrollo INSN San Borja"
 
 /**
- * Logotipo oficial. Cuando el archivo esté en `src/assets/tinkuy-logo.png`,
- * cambia `LOGO_SRC` por su import y `BrandMark` lo usará en lugar del símbolo
- * provisional.
+ * Logotipo oficial: la madre y el niño dentro del listón del encuentro. Vive
+ * como SVG para que aguante cualquier tamaño —desde los 24 px del header hasta
+ * un favicon— sin pesar ni pixelarse. `BrandMark` lo usa en cuanto no es nulo.
  */
-export const LOGO_SRC: string | null = null
+export const LOGO_SRC: string | null = logoUrl
