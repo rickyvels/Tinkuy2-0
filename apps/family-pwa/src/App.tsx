@@ -107,6 +107,21 @@ export default function App() {
   }, [session?.access_token]);
 
   useEffect(() => { void refresh(); }, [refresh]);
+  // El botón «atrás» —el físico de Android en una PWA instalada, el del navegador en la
+  // web— solo entiende el historial. Las pantallas viven en un estado de React, así que sin
+  // esto la primera pulsación se salía de la aplicación entera en vez de volver a la pantalla
+  // anterior. Cada `navigate` deja una entrada y el `popstate` la deshace.
+  useEffect(() => {
+    if (!session) return;
+    window.history.replaceState({ tkScreen: 'home' }, '');
+    const onPopState = (event: PopStateEvent) => {
+      const state = event.state as { tkScreen?: FamilyScreen } | null;
+      setScreen(state?.tkScreen ?? 'home');
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [session]);
+
   useEffect(() => {
     // Durante el juego y el reporte no se refresca: ambos son formularios largos y un
     // re-render a media respuesta se lleva por delante lo que la persona estaba escribiendo.
@@ -127,11 +142,17 @@ export default function App() {
 
   const report = async (data: BarrierReportPayload) => {
     setLoading(true); setError('');
-    try { await familyApi.report(session.access_token, caseData.case.id, data); await refresh(); setScreen('home'); }
+    try { await familyApi.report(session.access_token, caseData.case.id, data); await refresh(); window.history.back(); }
     catch (reason) { setError(reason instanceof Error ? reason.message : 'No se pudo enviar el aviso.'); }
     finally { setLoading(false); }
   };
-  const navigate = (next: FamilyScreen) => { setScreen(next); window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }); };
+  const navigate = (next: FamilyScreen) => {
+    // Ir a donde ya estás no debe apilar una entrada: si no, «atrás» se quedaría pulsando
+    // sobre la misma pantalla tantas veces como se hubiera tocado la pestaña.
+    if (next !== screen) window.history.pushState({ tkScreen: next }, '');
+    setScreen(next);
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  };
 
   if (screen === 'game') return <main className="family-app tinkuy-app">
     <DevelopmentGame

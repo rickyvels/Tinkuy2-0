@@ -131,6 +131,15 @@ function readStoredLang(): Lang {
 // para que una segunda visita no vuelva a pagar la llamada.
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/v1';
+
+// La traducción tiene su propia URL, separada del resto de la API a propósito. En el
+// despliegue de Vercel vive en `/api/i18n/translate`, una función serverless que guarda el
+// token de Hugging Face; el resto de la API (sesión, caso, libreta) está en otro servidor.
+// Apuntar `VITE_API_URL` al mismo sitio rompería el modo de demostración: las llamadas de
+// datos recibirían el index.html con un 200 en vez de fallar, y el respaldo sintético
+// —que solo se activa cuando la red cae— nunca entraría.
+const TRANSLATE_URL = import.meta.env.VITE_TRANSLATE_URL || `${API_URL}/i18n/translate`;
+
 const CACHE_KEY = 'sensoria-translations-qu';
 const FLUSH_DELAY_MS = 250;
 
@@ -156,7 +165,7 @@ async function flushPending() {
   if (!texts.length) return;
   texts.forEach((text) => pending.delete(text));
   try {
-    const response = await fetch(`${API_URL}/i18n/translate`, {
+    const response = await fetch(TRANSLATE_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ target: 'qu', texts }),

@@ -57,6 +57,9 @@ install('apps/family-pwa');
 // respondería el index.html con un 200 y el fallback nunca se activaría.
 run(['--prefix', 'apps/family-pwa', 'run', 'build', '--', '--base=/pwa/'], {
   VITE_SITE_URL: '/',
+  // La traducción sí vive en este despliegue: `api/i18n/translate.js` es una función
+  // serverless de Vercel. Es la única parte de la API que comparte origen con el sitio.
+  VITE_TRANSLATE_URL: '/api/i18n/translate',
 });
 
 mkdirSync(outDir, { recursive: true });

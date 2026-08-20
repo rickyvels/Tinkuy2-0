@@ -1,10 +1,17 @@
 # El proyecto de Vercel publica el sitio de `frontend/` en la raíz y la PWA familiar de
 # `apps/family-pwa` en /pwa/. Todo lo que no entra en ese build se queda fuera del paquete.
 
-# La API se despliega aparte (ver `render.yaml`) y el frontend la alcanza por
-# `VITE_API_BASE_URL`. Subir `api/` aquí además haría que Vercel detectara
-# `api/index.py` como función Python y construyera una copia de la API antigua.
-/api
+# La API de Python se despliega aparte (ver `render.yaml`). Se excluye archivo por archivo
+# en lugar de con `/api` entero porque `api/i18n/translate.js` sí tiene que subir: es la
+# función serverless que traduce al quechua. Si `api/index.py` viajara, Vercel lo detectaría
+# como función Python y construiría una copia de la API antigua.
+/api/index.py
+/api/app
+/api/tests
+/api/README.md
+/api/requirements.txt
+/api/requirements-dev.txt
+/api/i18n/*.test.mjs
 /backend
 
 # `apps/family-pwa` sí entra: es la PWA que el sitio publica en /pwa/ (ver

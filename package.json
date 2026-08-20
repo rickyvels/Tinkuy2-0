@@ -16,6 +16,7 @@
     "build:web": "node scripts/build-web.mjs",
     "build:site": "node scripts/build-site.mjs",
     "test": "npm run test:api",
-    "test:api": "node scripts/py.mjs -m pytest -q"
+    "test:api": "node scripts/py.mjs -m pytest -q",
+    "test:translate": "node api/i18n/translate.test.mjs"
   }
 }
